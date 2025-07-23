@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Fright Logistic - Global Logistics & Shipping Solutions</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2H1LGpQ2zWQ+5QkQ2Q0Q2Q0Q2Q0Q2Q0Q2Q0Q2Q0=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1j6kG6lL2Q2Q0Q2Q0Q2Q0Q2Q0Q2Q0Q2Q0Q2Q0Q2Q=" crossorigin=""></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        /* Header - GIG Style */
+        .header {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1.5px solid #e0e0e0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 2rem 0.7rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            margin-right: 2.2rem;
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2.2rem;
+            align-items: center;
+            flex: 1 1 auto;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .nav-menu a {
+            font-size: 0.88rem;
+            padding: 0.2rem 0.2rem;
+            color: #222;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #007bff;
+        }
+
+        .cta-button {
+            font-size: 0.88rem;
+            padding: 0.5rem 1.2rem;
+            background: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            font-weight: 600;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        .cta-button:hover {
+            background: #0056b3;
+        }
+
+        .auth-section {
+            display: flex;
+            gap: 0.7rem;
+            align-items: center;
+            flex: 0 0 auto;
+            margin-left: 2.2rem;
+        }
+
+        .auth-link {
+            font-size: 0.82rem;
+            padding: 0.35rem 0.9rem;
+            color: #007bff;
+            background: #f4f8ff;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .auth-link:hover {
+            background: #007bff;
+            color: #fff;
+        }
+
+        /* Hero Section - GIG Style */
+        .hero {
+            background: none;
+            position: relative;
+            min-height: 520px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            margin-top: 64px;
+            overflow: hidden;
+        }
+        .hero-bg-float {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/Road-Delivery.png') center/cover no-repeat;
+            animation: floatHeroBg 7s ease-in-out infinite alternate;
+        }
+        @keyframes floatHeroBg {
+            0% { transform: scale(1) translateY(0); }
+            100% { transform: scale(1.03) translateY(-18px); }
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 24, 48, 0.78); /* Darker overlay for better text contrast */
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 4.5rem 1.5rem 3.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 1.2rem;
+            letter-spacing: 0.01em;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.22);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            color: #e0e3ea;
+            font-weight: 400;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.13);
+        }
+
+        .tracking-card {
+            background: rgba(255,255,255,0.98);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 2.2rem 1.5rem 1.5rem 1.5rem;
+            max-width: 440px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .tracking-form {
+            display: flex;
+            gap: 0;
+            justify-content: center;
+            align-items: center;
+            width: auto;
+            margin: 0 auto;
+        }
+        .tracking-form input {
+            width: 240px;
+            min-width: 0;
+            padding: 1rem 1.1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px 0 0 8px;
+            font-size: 1.08rem;
+            outline: none;
+            text-align: center;
+        }
+        .tracking-form input:focus {
+            border-color: #007bff;
+        }
+        .tracking-form button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.5rem;
+            font-size: 1.13rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .tracking-form button:hover {
+            background: #0056b3;
+        }
+        .tracking-feedback {
+            margin-top: 1rem;
+            color: #333;
+            width: 100%;
+            text-align: left;
+            min-height: 1.5rem;
+        }
+        
+        /* Tracking Progress Styles */
+        .tracking-progress {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 2rem;
+            margin-top: 1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .progress-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        .progress-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.8rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        .progress-step {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+        }
+        .progress-step::before {
+            content: '';
+            position: absolute;
+            left: -1.6rem;
+            top: 0.3rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #e0e0e0;
+        }
+        .progress-step.active::before {
+            background: #007bff;
+            box-shadow: 0 0 0 2px #007bff;
+        }
+        .progress-step.completed::before {
+            background: #28a745;
+            box-shadow: 0 0 0 2px #28a745;
+        }
+        .step-content h4 {
+            margin: 0 0 0.3rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        .step-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .step-time {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.2rem;
+        }
+        .tracking-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .tracking-header h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1a1a1a;
+            font-size: 1.3rem;
+        }
+        .tracking-header .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-badge.in-transit { background: #fff3cd; color: #856404; }
+        .status-badge.delivered { background: #d4edda; color: #155724; }
+        .status-badge.pending { background: #f8d7da; color: #721c24; }
+        .status-badge.processing { background: #cce5ff; color: #004085; }
+        .location-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #007bff;
+        }
+        .location-info h5 {
+            margin: 0 0 0.5rem 0;
+            color: #1a1a1a;
+            font-size: 1rem;
+        }
+        .location-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Services Section - GIG Style */
+        .services {
+            padding: 4rem 2rem;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e0e0e0;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .service-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .service-content {
+            padding: 2rem;
+        }
+
+        .service-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .service-content p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .service-btn {
+            background: #007bff;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+            display: inline-block;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .service-btn:hover {
+            background: #0056b3;
+        }
+
+        /* About Section - GIG Style */
+        .about {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .about-image {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 900px) {
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .about-image {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .about-image img {
+                height: auto;
+                min-height: 180px;
+            }
+        }
+
+        /* Stats Section - GIG Style */
+        .stats {
+            padding: 4rem 2rem;
+            background: #007bff;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .stat-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Footer - GIG Style */
+        .footer {
+            background: #181c24;
+            color: #e0e3ea;
+            padding: 3rem 2rem 1.2rem;
+            border-top: 2.5px solid #007bff;
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+        }
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-bottom: 2.2rem;
+        }
+        .footer-section {
+            min-width: 210px;
+            max-width: 260px;
+            flex: 1 1 210px;
+        }
+        .footer-section h3 {
+            margin-bottom: 1.1rem;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.08rem;
+            letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-section > div {
+            background: #232733;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            padding: 1.1rem 1.2rem 0.7rem 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .footer-section a {
+            color: #b3c0d1;
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.97rem;
+            transition: color 0.2s;
+        }
+        .footer-section a:hover {
+            color: #007bff;
+        }
+        .footer-section p {
+            color: #b3c0d1;
+            font-size: 0.97rem;
+            margin-bottom: 0.5rem;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #232733;
+            color: #7c8591;
+            font-size: 0.98rem;
+            letter-spacing: 0.01em;
+        }
+        @media (max-width: 900px) {
+            .footer-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.2rem;
+            }
+            .footer-section {
+                max-width: 100%;
+            }
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .header-container {
+                padding: 0.7rem 1rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-content {
+                padding: 2.5rem 0.5rem 2rem 0.5rem;
+            }
+            .tracking-card {
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+            .tracking-form input {
+                width: 120px;
+                font-size: 1rem;
+            }
+            .tracking-form button {
+                font-size: 1rem;
+                padding: 1rem 1rem;
+            }
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: auto;
+            background: rgba(10, 24, 48, 0.45);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            margin: 5% auto;
+            padding: 2.5rem 2rem 2rem 2rem;
+            border-radius: 14px;
+            max-width: 350px;
+            box-shadow: 0 6px 32px rgba(10,37,64,0.18);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: #0a2540;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .modal-content form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .modal-content input[type="email"],
+        .modal-content input[type="password"] {
+            padding: 0.7rem;
+            border: 1.5px solid #b0b8c9;
+            border-radius: 7px;
+            font-size: 1rem;
+            background: #f7fafc;
+            transition: border 0.2s;
+        }
+        .modal-content input:focus {
+            border: 1.5px solid #0a2540;
+            outline: none;
+        }
+        .modal-content button[type="submit"] {
+            background: linear-gradient(90deg, #0a2540 60%, #1e3a5c 100%);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 0.7rem 1.2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .modal-content button[type="submit"]:hover, .modal-content button[type="submit"]:focus {
+            background: #007bff;
+            color: #fff;
+        }
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1.2rem;
+            font-size: 1.5rem;
+            color: #b0b8c9;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close:hover, .close:focus {
+            color: #0a2540;
+        }
+        /* Tracking Progress Styles */
+        .tracking-progress {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 2rem;
+            margin-top: 1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .progress-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        .progress-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.8rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        .progress-step {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+        }
+        .progress-step::before {
+            content: '';
+            position: absolute;
+            left: -1.6rem;
+            top: 0.3rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #e0e0e0;
+        }
+        .progress-step.active::before {
+            background: #007bff;
+            box-shadow: 0 0 0 2px #007bff;
+        }
+        .progress-step.completed::before {
+            background: #28a745;
+            box-shadow: 0 0 0 2px #28a745;
+        }
+        .step-content h4 {
+            margin: 0 0 0.3rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        .step-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .step-time {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.2rem;
+        }
+        .tracking-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .tracking-header h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1a1a1a;
+            font-size: 1.3rem;
+        }
+        .tracking-header .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-badge.in-transit { background: #fff3cd; color: #856404; }
+        .status-badge.delivered { background: #d4edda; color: #155724; }
+        .status-badge.pending { background: #f8d7da; color: #721c24; }
+        .status-badge.processing { background: #cce5ff; color: #004085; }
+        .location-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #007bff;
+        }
+        .location-info h5 {
+            margin: 0 0 0.5rem 0;
+            color: #1a1a1a;
+            font-size: 1rem;
+        }
+        .location-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="#home" class="logo"><img src="images/logo.png" alt="Nexus Fright Logo" style="height:36px;vertical-align:middle;margin-right:8px;"> <span style="vertical-align:middle;">NEXUS FRIGHT LOGISTIC</span></a>
+            <nav style="flex:1;display:flex;justify-content:center;">
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#track" class="cta-button" id="trackPackageNavBtn">Track Package</a></li>
+                </ul>
+            </nav>
+            <div class="auth-section" id="authSection">
+                <a href="#" class="auth-link" onclick="openModal('modal-signin');return false;" id="signinBtn">Sign In</a>
+                <a href="#" class="auth-link" onclick="openModal('modal-signup');return false;" id="signupBtn">Sign Up</a>
+            </div>
+            <div class="auth-section" id="userSection" style="display:none;">
+                <span style="color:#007bff;font-weight:600;" id="headerUserName"></span>
+                <a href="#" class="auth-link" onclick="logoutUser();return false;" style="background:#dc3545;border-color:#dc3545;color:#fff;">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg-float"></div>
+        <div class="hero-content">
+            <h1>Track Shipment / Find and Ship A Product</h1>
+            <p>Reliable, fast, and secure shipping services worldwide. Track your packages in real-time with Nexus Fright Logistic.</p>
+            <div class="tracking-card">
+                <form class="tracking-form" onsubmit="event.preventDefault(); trackPackage();">
+                    <input type="text" id="trackingNumber" placeholder="Enter your tracking number" required>
+                    <button type="submit">Track</button>
+                </form>
+                <div id="trackingResult" class="tracking-feedback"></div>
+            </div>
+        </div>
+    </section>
+    <!-- End Hero Section -->
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <img src="images/Road-Delivery.png" alt="Express Shipping">
+                    <div class="service-content">
+                        <h3>Express Shipping</h3>
+                        <p>Fast and reliable express delivery services for time-sensitive packages. We ensure your packages reach their destination quickly and safely.</p>
+                        <a href="#" class="service-btn" onclick="openModal('modal-track');return false;">Get Connected</a>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <img src="images/istockphoto-1434715649-612x612.jpg" alt="Freight Services">
+                    <div class="service-content">
+                        <h3>Fright Services</h3>
+                        <p>Comprehensive freight solutions including air, sea, and land transportation. Perfect for large shipments and international trade.</p>
+                        <a href="#" class="service-btn" onclick="openModal('modal-track');return false;">Get Connected</a>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <img src="images/istockphoto-1432735210-612x612.jpg" alt="Warehouse Solutions">
+                    <div class="service-content">
+                        <h3>Warehouse Solutions</h3>
+                        <p>Secure storage and inventory management services for your business needs. State-of-the-art facilities with 24/7 security.</p>
+                        <a href="#" class="service-btn" onclick="openModal('modal-track');return false;">Get Connected</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About Nexus Fright Logistic</h2>
+                    <p>We are a leading global logistics company providing comprehensive shipping and delivery solutions. With years of experience in the industry, we ensure your packages reach their destination safely and on time.</p>
+                    <p>Our network spans across continents, offering reliable services to businesses and individuals worldwide. From express shipping to freight services, we have the expertise to handle all your logistics needs with precision and care.</p>
+                    <a href="#" class="service-btn" onclick="openModal('modal-track');return false;">Get Connected</a>
+                </div>
+                <div class="about-image">
+                    <img src="images/premium_photo-1661900320520-f180a50463d7.avif" alt="Nexus Fright Logistics Premium">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>150+</h3>
+                    <p>Countries Served</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10M+</h3>
+                    <p>Packages Delivered</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>Customer Support</p>
+                </div>
+                <div class="stat-item">
+                    <h3>99.9%</h3>
+                    <p>Delivery Success Rate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote-icon">&#10077;</div>
+                    <p class="testimonial-text">Nexus Fright made my international shipping experience seamless and stress-free. My package arrived earlier than expected!</p>
+                    <div class="testimonial-user-row">
+                        <div class="testimonial-avatar">SK</div>
+                        <div class="testimonial-user-info">
+                            <span class="testimonial-name">Sarah K.</span>
+                            <span class="testimonial-country">UK <span class="flag">🇬🇧</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-quote-icon">&#10077;</div>
+                    <p class="testimonial-text">Excellent customer support and reliable delivery. I trust Nexus Fright for all my business logistics.</p>
+                    <div class="testimonial-user-row">
+                        <div class="testimonial-avatar">JO</div>
+                        <div class="testimonial-user-info">
+                            <span class="testimonial-name">James O.</span>
+                            <span class="testimonial-country">United States <span class="flag">🇺🇸</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-quote-icon">&#10077;</div>
+                    <p class="testimonial-text">Fast, secure, and affordable! Highly recommend Nexus Fright to anyone needing global shipping.</p>
+                    <div class="testimonial-user-row">
+                        <div class="testimonial-avatar">ML</div>
+                        <div class="testimonial-user-info">
+                            <span class="testimonial-name">Maria L.</span>
+                            <span class="testimonial-country">Germany <span class="flag">🇩🇪</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Testimonials Section -->
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 id="quickLinksToggle" style="cursor:pointer;user-select:none;">Quick Links <i class="fas fa-chevron-down" style="font-size:0.9em;"></i></h3>
+                    <div id="quickLinksList" style="display:none;flex-direction:column;gap:0.5rem;">
+                        <a href="#home">Home</a>
+                        <a href="#services">Services</a>
+                        <a href="#about">About Us</a>
+                        <a href="#track">Track Package</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3 id="ourServicesToggle" style="cursor:pointer;user-select:none;">Our Services <i class="fas fa-chevron-down" style="font-size:0.9em;"></i></h3>
+                    <div id="ourServicesList" style="display:none;flex-direction:column;gap:0.5rem;">
+                        <a href="#">Express Shipping</a>
+                        <a href="#">Freight Services</a>
+                        <a href="#">Warehouse Solutions</a>
+                        <a href="#">International Shipping</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3 id="contactInfoToggle" style="cursor:pointer;user-select:none;">Contact Information <i class="fas fa-chevron-down" style="font-size:0.9em;"></i></h3>
+                    <div id="contactInfoList" style="display:none;flex-direction:column;gap:0.5rem;">
+                        <p>Email: infonexusfright@gmail.com</p>
+                        <p>Phone: +44 7380 226 501</p>
+                        <p>Address: CHISWICK W4 4HH, 315 High Road Chiswick, United Kingdom </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Nexus Fright Logistic. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sign In Modal -->
+    <div id="modal-signin" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-signin')">&times;</span>
+            <h2>Sign In</h2>
+            <form id="signin-form">
+                <input type="email" id="signin-email" placeholder="Email" required>
+                <input type="password" id="signin-password" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+            </form>
+            <div style="font-size:0.97rem;">Don't have an account? <a href="#" onclick="switchModal('modal-signin','modal-signup');return false;" style="color:#007bff;">Sign Up</a></div>
+        </div>
+    </div>
+    <!-- Sign Up Modal -->
+    <div id="modal-signup" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-signup')">&times;</span>
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="tel" id="signup-phone" placeholder="Phone (e.g. +1234567890)" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <div style="font-size:0.97rem;">Already have an account? <a href="#" onclick="switchModal('modal-signup','modal-signin');return false;" style="color:#007bff;">Sign In</a></div>
+        </div>
+    </div>
+    <!-- Track Package Modal -->
+    <div id="modal-track" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-track')">&times;</span>
+            <h2>Track Your Package</h2>
+            <form class="tracking-form" onsubmit="event.preventDefault(); trackPackageModal();">
+                <input type="text" id="trackingNumberModal" placeholder="Enter your tracking number" required>
+                <button type="submit">Track</button>
+            </form>
+            <div id="trackingResultModal" class="tracking-feedback"></div>
+            <div id="liveLocationMap" style="width:100%;height:300px;margin-top:1rem;display:none;"></div>
+        </div>
+    </div>
+    
+    <!-- User Dashboard Modal -->
+    <div id="modal-dashboard" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <span class="close" onclick="closeModal('modal-dashboard')">&times;</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e0e0e0;">
+                <h2>Welcome, <span id="userName">User</span>!</h2>
+                <button onclick="logoutUser()" style="background: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Logout</button>
+            </div>
+            
+            <!-- Quick Track Section -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: #1a1a1a;">Quick Track Package</h3>
+                <form onsubmit="event.preventDefault(); quickTrackPackage();" style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="quickTrackNumber" placeholder="Enter tracking number" required style="flex: 1; padding: 0.7rem; border: 1.5px solid #b0b8c9; border-radius: 7px; font-size: 1rem;">
+                    <button type="submit" style="background: #007bff; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 7px; font-size: 1rem; cursor: pointer;">Track</button>
+                </form>
+                <div id="quickTrackResult" style="margin-top: 1rem;"></div>
+            </div>
+            
+            <!-- My Orders Section -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: #1a1a1a;">My Orders</h3>
+                <div id="userOrders" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; min-height: 200px;">
+                    <div style="text-align: center; color: #666; padding: 2rem;">
+                        <i class="fas fa-box" style="font-size: 3rem; margin-bottom: 1rem; color: #ccc;"></i>
+                        <p>No orders found. Start by tracking a package above.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div>
+                <h3 style="margin-bottom: 1rem; color: #1a1a1a;">Recent Activity</h3>
+                <div id="recentActivity" style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <div style="text-align: center; color: #666; padding: 1rem;">
+                        <p>No recent activity</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Live Location Tracking -->
+            <div style="margin-top:2rem;">
+                <h3 style="margin-bottom: 1rem; color: #1a1a1a;">Track User's Live Location (Admin)</h3>
+                <form onsubmit="event.preventDefault(); startAdminLiveTracking();" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <input type="text" id="adminTrackUserId" placeholder="Enter user email or ID" required style="flex: 1; padding: 0.7rem; border: 1.5px solid #b0b8c9; border-radius: 7px; font-size: 1rem;">
+                    <button type="submit" style="background: #007bff; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 7px; font-size: 1rem; cursor: pointer;">Track User</button>
+                </form>
+                <div id="adminLiveMap" style="width:100%;height:300px;display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Verification Modal -->
+    <div id="modal-verify-email" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-verify-email')">&times;</span>
+            <h2>Verify Your Email</h2>
+            <p>We've sent a verification link to your email address. Please check your inbox and click the link to activate your account.</p>
+        </div>
+    </div>
+
+    <script>
+        // Use your Node.js endpoint for tracking
+        const TRACKING_API = '/api/tracking'; // Adjust path if needed
+        async function fetchTracking(trackingNumber) {
+            // Try to get real data from Node.js backend
+            try {
+                const res = await fetch(`${TRACKING_API}/${encodeURIComponent(trackingNumber)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && !data.error && data.tracking_number) {
+                        // Convert Node.js field names to JS expected names
+                        return {
+                            trackingNumber: data.tracking_number,
+                            status: data.status,
+                            lastUpdate: data.last_update,
+                            estimatedDelivery: data.estimated_delivery,
+                            lastUpdateTime: data.last_update_time
+                        };
+                    }
+                }
+            } catch (e) {
+                // Ignore and fall back to fake
+            }
+            // If no real data found, generate realistic tracking data
+            return generateRealisticTracking(trackingNumber);
+        }
+        
+        function generateRealisticTracking(trackingNumber) {
+            const statuses = [
+                'In Transit',
+                'Out for Delivery', 
+                'Delivered',
+                'Processing',
+                'Package Picked Up'
+            ];
+            
+            const locations = [
+                'Distribution Center - New York',
+                'Sorting Facility - Los Angeles',
+                'Transit Hub - Chicago',
+                'Local Facility - Miami',
+                'International Gateway - Houston',
+                'Regional Center - Atlanta',
+                'Processing Center - Dallas',
+                'Delivery Station - Phoenix'
+            ];
+            
+            const updates = [
+                'Package has been picked up from sender',
+                'Package arrived at sorting facility',
+                'Package is in transit to destination',
+                'Package arrived at local facility',
+                'Package is out for delivery',
+                'Package delivered successfully',
+                'Package is being processed',
+                'Package cleared customs'
+            ];
+            
+            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+            const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
+            
+            // Generate realistic dates
+            const now = new Date();
+            const deliveryDate = new Date(now.getTime() + (Math.random() * 7 + 1) * 24 * 60 * 60 * 1000);
+            const lastUpdateDate = new Date(now.getTime() - Math.random() * 3 * 24 * 60 * 60 * 1000);
+            
+            return {
+                trackingNumber: trackingNumber,
+                status: randomStatus,
+                lastUpdate: `${randomUpdate} - ${randomLocation}`,
+                estimatedDelivery: deliveryDate.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                }),
+                lastUpdateTime: lastUpdateDate.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                })
+            };
+        }
+        
+        function generateTrackingProgress(tracking) {
+            const status = tracking.status.toLowerCase();
+            const statusClass = status.includes('delivered') ? 'delivered' : 
+                              status.includes('transit') ? 'in-transit' : 
+                              status.includes('pending') ? 'pending' : 'processing';
+            
+            const progressSteps = getProgressSteps(tracking);
+            
+            return `
+                <div class="tracking-progress">
+                    <div class="tracking-header">
+                        <h3>Tracking Number: ${tracking.trackingNumber}</h3>
+                        <span class="status-badge ${statusClass}">${tracking.status}</span>
+                    </div>
+                    
+                    <div class="location-info">
+                        <h5>Current Location</h5>
+                        <p>${tracking.lastUpdate}</p>
+                    </div>
+                    
+                    <div class="progress-timeline">
+                        ${progressSteps.map(step => `
+                            <div class="progress-step ${step.status}">
+                                <div class="step-content">
+                                    <h4>${step.title}</h4>
+                                    <p>${step.description}</p>
+                                    <div class="step-time">${step.time}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Modal open/close/switch logic
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        function switchModal(from, to) {
+            closeModal(from);
+            openModal(to);
+        }
+        // Auth API endpoints
+        const AUTH_API = 'http://localhost:5000/api/auth'; // Change to your backend
+        // Sign Up
+        document.getElementById('signup-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value.trim();
+            const phone = document.getElementById('signup-phone').value.trim();
+            const password = document.getElementById('signup-password').value;
+            if (!email || !phone || !password) {
+                alert('Please fill all fields.');
+                return;
+            }
+            try {
+                const res = await fetch(`${AUTH_API}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, phone, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    // Auto sign in after sign up
+                    const loginRes = await fetch(`${AUTH_API}/signin`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    const loginData = await loginRes.json();
+                    if (loginRes.ok && loginData.user) {
+                        localStorage.setItem('nexusUser', JSON.stringify(loginData.user));
+                        setUserUI(loginData.user);
+                        closeModal('modal-signup');
+                        openModal('modal-dashboard');
+                    } else {
+                        closeModal('modal-signup');
+                        openModal('modal-verify-email');
+                    }
+                } else {
+                    alert(data.msg || 'Sign up failed.');
+                }
+            } catch (err) {
+                alert('Server error.');
+            }
+        };
+        // Sign In
+        document.getElementById('signin-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signin-email').value.trim();
+            const password = document.getElementById('signin-password').value;
+            if (!email || !password) {
+                alert('Please fill all fields.');
+                return;
+            }
+            try {
+                const res = await fetch(`${AUTH_API}/signin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok && data.user) {
+                    localStorage.setItem('nexusUser', JSON.stringify(data.user));
+                    setUserUI(data.user);
+                    closeModal('modal-signin');
+                    openModal('modal-dashboard');
+                } else {
+                    alert(data.msg || 'Sign in failed.');
+                }
+            } catch (err) {
+                alert('Server error.');
+            }
+        };
+        // Set user UI
+        function setUserUI(user) {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('userSection').style.display = 'flex';
+            document.getElementById('headerUserName').textContent = user.email || user.name || 'User';
+            document.getElementById('userName').textContent = user.email || user.name || 'User';
+        }
+        // Logout
+        function logoutUser() {
+            localStorage.removeItem('nexusUser');
+            document.getElementById('authSection').style.display = 'flex';
+            document.getElementById('userSection').style.display = 'none';
+            closeModal('modal-dashboard');
+        }
+        // On page load, check session
+        window.addEventListener('DOMContentLoaded', function() {
+            const user = localStorage.getItem('nexusUser');
+            if (user) {
+                setUserUI(JSON.parse(user));
+            }
+        });
+        // Footer section toggles
+        function toggleFooterSection(toggleId, listId) {
+            const list = document.getElementById(listId);
+            const chevron = document.querySelector(`#${toggleId} i`);
+            if (list.style.display === 'flex') {
+                list.style.display = 'none';
+                chevron.style.transform = 'rotate(0deg)';
+            } else {
+                list.style.display = 'flex';
+                chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+        document.getElementById('quickLinksToggle').onclick = function() {
+            toggleFooterSection('quickLinksToggle', 'quickLinksList');
+        };
+        document.getElementById('ourServicesToggle').onclick = function() {
+            toggleFooterSection('ourServicesToggle', 'ourServicesList');
+        };
+        document.getElementById('contactInfoToggle').onclick = function() {
+            toggleFooterSection('contactInfoToggle', 'contactInfoList');
+        };
+        // Track Package (Hero section)
+        async function addTrackingToAdmin(trackingNumber) {
+            await fetch('add_tracking.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tracking_number: trackingNumber })
+            });
+        }
+        let trackingRefreshInterval = null;
+        function trackPackage() {
+            const trackingNumber = document.getElementById('trackingNumber').value.trim();
+            const resultDiv = document.getElementById('trackingResult');
+            if (!trackingNumber) {
+                resultDiv.innerHTML = '<span style="color:red">Please enter a tracking number.</span>';
+                return;
+            }
+            // Add to admin management
+            addTrackingToAdmin(trackingNumber);
+            resultDiv.innerHTML = '<span style="color:#007bff">Generating tracking details...</span>';
+            setTimeout(async () => {
+                const tracking = await fetchTracking(trackingNumber);
+                resultDiv.innerHTML = generateTrackingProgress(tracking);
+                // Set up auto-refresh every 10 seconds
+                if (trackingRefreshInterval) clearInterval(trackingRefreshInterval);
+                trackingRefreshInterval = setInterval(async () => {
+                    const updatedTracking = await fetchTracking(trackingNumber);
+                    resultDiv.innerHTML = generateTrackingProgress(updatedTracking);
+                }, 10000); // 10 seconds
+            }, 800);
+        }
+        // Track Package (Modal)
+        function trackPackageModal() {
+            const trackingNumber = document.getElementById('trackingNumberModal').value.trim();
+            const resultDiv = document.getElementById('trackingResultModal');
+            if (!trackingNumber) {
+                resultDiv.innerHTML = '<span style="color:red">Please enter a tracking number.</span>';
+                return;
+            }
+            resultDiv.innerHTML = '<span style="color:#007bff">Generating tracking details...</span>';
+            setTimeout(async () => {
+                const tracking = await fetchTracking(trackingNumber);
+                resultDiv.innerHTML = generateTrackingProgress(tracking);
+            }, 800);
+        }
+        document.getElementById('trackPackageNavBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('home').scrollIntoView({ behavior: 'smooth' });
+        });
+        // Only allow dashboard access if signed in
+        function openDashboardModal() {
+            const user = localStorage.getItem('nexusUser');
+            if (user) {
+                openModal('modal-dashboard');
+            } else {
+                openModal('modal-signin');
+            }
+        }
+        // Live Location Tracking in Tracking Modal
+        let liveMap = null;
+        let liveMarker = null;
+        let liveWatchId = null;
+        let liveUserId = null;
+
+        function startLiveLocationTracking() {
+            const mapDiv = document.getElementById('liveLocationMap');
+            mapDiv.style.display = 'block';
+            // Get userId (from logged in user or guest)
+            let user = localStorage.getItem('nexusUser');
+            if (user) {
+                try { user = JSON.parse(user); } catch (e) { user = null; }
+            }
+            liveUserId = user && user.email ? user.email : 'guest-' + Math.random().toString(36).substring(2, 10);
+            // Start watching position
+            if (navigator.geolocation) {
+                liveWatchId = navigator.geolocation.watchPosition(async (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    // Send to backend
+                    await fetch('http://localhost:5000/api/location/update-location', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: liveUserId, latitude, longitude })
+                    });
+                    // Show/update map
+                    if (!liveMap) {
+                        liveMap = L.map('liveLocationMap').setView([latitude, longitude], 13);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(liveMap);
+                        liveMarker = L.marker([latitude, longitude]).addTo(liveMap).bindPopup('You are here').openPopup();
+                    } else {
+                        liveMap.setView([latitude, longitude], 13);
+                        liveMarker.setLatLng([latitude, longitude]);
+                    }
+                }, (err) => {
+                    mapDiv.style.display = 'none';
+                    alert('Unable to access your location.');
+                }, {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 5000
+                });
+            } else {
+                mapDiv.style.display = 'none';
+                alert('Geolocation is not supported by your browser.');
+            }
+        }
+        function stopLiveLocationTracking() {
+            if (liveWatchId) {
+                navigator.geolocation.clearWatch(liveWatchId);
+                liveWatchId = null;
+            }
+            if (liveMap) {
+                liveMap.remove();
+                liveMap = null;
+                liveMarker = null;
+            }
+            document.getElementById('liveLocationMap').style.display = 'none';
+        }
+        // Hook into modal open/close
+        const origOpenModal = openModal;
+        openModal = function(id) {
+            origOpenModal(id);
+            if (id === 'modal-track') {
+                startLiveLocationTracking();
+            }
+        };
+        const origCloseModal = closeModal;
+        closeModal = function(id) {
+            origCloseModal(id);
+            if (id === 'modal-track') {
+                stopLiveLocationTracking();
+            }
+        };
+
+        // Admin/Viewer: Show live location of a user
+        let adminLiveMap = null;
+        let adminLiveMarker = null;
+        let adminLocationInterval = null;
+        function startAdminLiveTracking() {
+            const userId = document.getElementById('adminTrackUserId').value.trim();
+            const mapDiv = document.getElementById('adminLiveMap');
+            if (!userId) {
+                alert('Please enter a user email or ID.');
+                return;
+            }
+            mapDiv.style.display = 'block';
+            async function updateLocation() {
+                try {
+                    const res = await fetch(`http://localhost:5000/api/location/get-location/${encodeURIComponent(userId)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const { latitude, longitude } = data;
+                        if (!adminLiveMap) {
+                            adminLiveMap = L.map('adminLiveMap').setView([latitude, longitude], 13);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '© OpenStreetMap contributors'
+                            }).addTo(adminLiveMap);
+                            adminLiveMarker = L.marker([latitude, longitude]).addTo(adminLiveMap).bindPopup('Tracked User').openPopup();
+                        } else {
+                            adminLiveMap.setView([latitude, longitude], 13);
+                            adminLiveMarker.setLatLng([latitude, longitude]);
+                        }
+                    } else {
+                        mapDiv.style.display = 'none';
+                        if (adminLiveMap) { adminLiveMap.remove(); adminLiveMap = null; adminLiveMarker = null; }
+                        clearInterval(adminLocationInterval);
+                        alert('Location not found for this user.');
+                    }
+                } catch (e) {
+                    // Optionally handle error
+                }
+            }
+            updateLocation();
+            if (adminLocationInterval) clearInterval(adminLocationInterval);
+            adminLocationInterval = setInterval(updateLocation, 5000); // Update every 5 seconds
+        }
+    </script>
+</body>
+</html>
